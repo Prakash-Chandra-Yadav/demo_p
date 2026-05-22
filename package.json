@@ -1,0 +1,7 @@
+{
+  "name": "phishing-awareness-demo",
+  "version": "1.0.0",
+  "description": "Security awareness training demo — fictional webmail phishing page for controlled internal training sessions only.",
+  "private": true,
+  "license": "UNLICENSED"
+}

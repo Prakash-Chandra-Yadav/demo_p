@@ -1,0 +1,139 @@
+<!--
+  ============================================================
+  SECURITY AWARENESS TRAINING DEMO - NOT A REAL LOGIN PAGE
+  Fictional "DemoCorp Webmail" used to teach employees how
+  phishing pages mimic real ones. Does NOT impersonate any
+  real brand. Captured credentials are stored only to be
+  shown back to the user as proof of capture.
+  ============================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DemoCorp Webmail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 120px;
+  }
+  .login-wrap {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+  .logo { margin-bottom: 22px; }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #4ab3e6;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: serif;
+  }
+  .notice {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    line-height: 1.4;
+    text-align: left;
+  }
+  .input-group {
+    display: flex;
+    align-items: center;
+    background: #f1f6fc;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .input-icon {
+    width: 36px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8eef5;
+    color: #4b5563;
+    flex-shrink: 0;
+  }
+  .input-icon svg { width: 16px; height: 16px; }
+  .input-group input {
+    flex: 1;
+    padding: 9px 12px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #1f2937;
+    outline: none;
+    width: 100%;
+  }
+  .input-group input::placeholder { color: #9ca3af; }
+  button {
+    width: 100%;
+    padding: 10px;
+    background: #4ab3e6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 4px;
+  }
+  button:hover { background: #3a9fd1; }
+  .footer-text {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #4b5563;
+  }
+</style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="logo">
+      <span style="font-size: 11px; color: #9ca3af;">Logo</span>
+    </div>
+
+    <div class="notice">
+      &#9888; Your mailbox is 98% full. Sign in to free up space and avoid losing incoming mail.
+    </div>
+
+    <form action="/api/login" method="POST" id="loginForm">
+      <div class="input-group">
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </span>
+        <input type="email" id="email" name="email" placeholder="email" required autocomplete="username">
+      </div>
+      <div class="input-group">
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        </span>
+        <input type="password" id="password" name="password" placeholder="password" required autocomplete="current-password">
+      </div>
+      <button type="submit">LOGIN</button>
+    </form>
+
+    <div class="footer-text">Bhrkuti Webmail</div>
+  </div>
+</body>
+</html>
