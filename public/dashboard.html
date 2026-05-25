@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Hacker Dashboard  Captured Credentials</title>
+<title>Trainer Dashboard — Captured Credentials</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -96,11 +96,11 @@
 <div class="container">
   <header>
     <h1>🎣 Phishing Capture Dashboard</h1>
-    <span class="badge">Demo</span>
+    <span class="badge">TRAINING DEMO</span>
   </header>
 
   <div class="notice">
-    This dashboard is for the security awareness. It displays what a real attacker would see after running a phishing kit.
+    This dashboard is for the security awareness trainer. It displays what a real attacker would see after running a phishing kit. Use it during the live demo to show participants the captured data immediately after they "fall" for the fake login.
   </div>
 
   <div class="stats">
@@ -108,8 +108,9 @@
       <div class="label">Credentials captured</div>
       <div class="value" id="count">0</div>
     </div>
-    <div class="stat-item" style="margin-left:auto; align-self:center;">
+    <div class="stat-item" style="margin-left:auto; align-self:center; display:flex; gap:8px;">
       <button class="refresh" onclick="loadData()">↻ Refresh</button>
+      <button class="refresh" style="background:#dc2626;" onclick="clearAll()">Clear All</button>
     </div>
   </div>
 
@@ -153,6 +154,15 @@ async function loadData() {
 }
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+async function clearAll() {
+  if (!confirm('Clear all captured credentials? This cannot be undone.')) return;
+  try {
+    await fetch('/api/clear');
+    loadData();
+  } catch (err) {
+    alert('Failed to clear: ' + err.message);
+  }
 }
 loadData();
 setInterval(loadData, 3000);

