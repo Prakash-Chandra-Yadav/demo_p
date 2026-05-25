@@ -1,7 +1,8 @@
 // ============================================================
 // SECURITY AWARENESS TRAINING DEMO
-// Captures form submissions and stores them as JSON files in
-// Vercel Blob so the trainer dashboard can display them.
+// Captures form submissions and stores them as PRIVATE JSON
+// files in Vercel Blob. Only the dashboard (via /api/captured)
+// can read them, using the server-side BLOB_READ_WRITE_TOKEN.
 // ============================================================
 
 import { put } from '@vercel/blob';
@@ -22,13 +23,12 @@ export default async function handler(req, res) {
   };
 
   try {
-    // Build a unique filename. Timestamp + random suffix keeps order + uniqueness.
     const safeTs = entry.timestamp.replace(/[:.]/g, '-');
     const random = Math.random().toString(36).slice(2, 8);
     const filename = `captures/${safeTs}-${random}.json`;
 
     await put(filename, JSON.stringify(entry), {
-      access: 'public',
+      access: 'private',
       contentType: 'application/json',
       addRandomSuffix: false,
     });
@@ -38,7 +38,6 @@ export default async function handler(req, res) {
     console.error('[TRAINING DEMO] Blob write error:', err);
   }
 
-  // Redirect to the "you were phished" reveal page
   res.writeHead(302, { Location: '/caught.html' });
   res.end();
 }
