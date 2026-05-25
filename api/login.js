@@ -1,10 +1,10 @@
 // ============================================================
 // SECURITY AWARENESS TRAINING DEMO
-// Captures form submissions and stores them in Vercel KV so
-// the trainer dashboard can display them during the live demo.
+// Captures form submissions and stores them as JSON files in
+// Vercel Blob so the trainer dashboard can display them.
 // ============================================================
 
-import { kv } from '@vercel/kv';
+import { put } from '@vercel/blob';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -22,16 +22,23 @@ export default async function handler(req, res) {
   };
 
   try {
-    // Push the entry to the front of a list called "captures"
-    await kv.lpush('captures', JSON.stringify(entry));
-    // Keep only the latest 50 entries
-    await kv.ltrim('captures', 0, 49);
-    console.log('[TRAINING DEMO] Capture stored:', entry.email);
+    // Build a unique filename. Timestamp + random suffix keeps order + uniqueness.
+    const safeTs = entry.timestamp.replace(/[:.]/g, '-');
+    const random = Math.random().toString(36).slice(2, 8);
+    const filename = `captures/${safeTs}-${random}.json`;
+
+    await put(filename, JSON.stringify(entry), {
+      access: 'public',
+      contentType: 'application/json',
+      addRandomSuffix: false,
+    });
+
+    console.log('[TRAINING DEMO] Capture stored:', filename);
   } catch (err) {
-    console.error('[TRAINING DEMO] KV error:', err);
+    console.error('[TRAINING DEMO] Blob write error:', err);
   }
 
-  // Redirect victim to the "you were phished" reveal page
+  // Redirect to the "you were phished" reveal page
   res.writeHead(302, { Location: '/caught.html' });
   res.end();
 }

@@ -1,29 +1,40 @@
 // ============================================================
 // SECURITY AWARENESS TRAINING DEMO
-// Returns captured credentials from Vercel KV so the trainer
-// dashboard can display them during the live demo.
+// Lists all capture files in Vercel Blob and returns the
+// parsed entries for the trainer dashboard.
 // ============================================================
 
-import { kv } from '@vercel/kv';
+import { list } from '@vercel/blob';
 
 export default async function handler(req, res) {
   try {
-    // Fetch all entries (lpush + ltrim keeps newest first, max 50)
-    const raw = await kv.lrange('captures', 0, -1);
-    const entries = raw.map(item => {
-      try {
-        return typeof item === 'string' ? JSON.parse(item) : item;
-      } catch {
-        return null;
-      }
-    }).filter(Boolean);
+    const { blobs } = await list({ prefix: 'captures/', limit: 100 });
+
+    // Fetch each blob's JSON contents in parallel
+    const entries = await Promise.all(
+      blobs.map(async (blob) => {
+        try {
+          const r = await fetch(blob.url);
+          if (!r.ok) return null;
+          return await r.json();
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    const valid = entries.filter(Boolean);
+    // Sort newest first
+    valid.sort((a, b) =>
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
 
     res.status(200).json({
-      count: entries.length,
-      entries: entries
+      count: valid.length,
+      entries: valid
     });
   } catch (err) {
-    console.error('[TRAINING DEMO] KV read error:', err);
+    console.error('[TRAINING DEMO] Blob read error:', err);
     res.status(200).json({ count: 0, entries: [], error: err.message });
   }
 }
